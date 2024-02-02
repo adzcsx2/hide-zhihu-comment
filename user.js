@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         隐藏知乎评论
-// @version      0.0.2
+// @version      0.0.3
 // @author       wzj042
 // @description  隐藏低信息量的评论，如单纯表情类评论
 // @icon         https://picx.zhimg.com/v2-abed1a8c04700ba7d72b45195223e0ff_l.jpg?source=d16d100b
