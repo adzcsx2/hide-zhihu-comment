@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         隐藏知乎评论
-// @version      0.0.3
+// @version      0.0.4
 // @author       wzj042
 // @description  隐藏低信息量的评论，如单纯表情类评论
 // @icon         https://picx.zhimg.com/v2-abed1a8c04700ba7d72b45195223e0ff_l.jpg?source=d16d100b
@@ -9,6 +9,8 @@
 // @namespace    https://github.com/wzj042/hide-zhihu-comment
 // @supportURL   https://github.com/wzj042/hide-zhihu-comment
 // @homepageURL  https://github.com/wzj042/hide-zhihu-comment
+// @downloadURL https://update.greasyfork.org/scripts/486322/%E9%9A%90%E8%97%8F%E7%9F%A5%E4%B9%8E%E8%AF%84%E8%AE%BA.user.js
+// @updateURL https://update.greasyfork.org/scripts/486322/%E9%9A%90%E8%97%8F%E7%9F%A5%E4%B9%8E%E8%AF%84%E8%AE%BA.meta.js
 // ==/UserScript==
 
 (function () {
@@ -58,9 +60,9 @@
                     commentDiv.style.display = 'none';
                 }
             }
-            let text = curComment.innerHTML;
+            let text = curComment.innerText;
 
-            let textLen = getTextLen(text);
+            let textLen = getTextLen(curComment);
 
 
             if (funcSwitch.banLenLimit && textLen <= banLenLimit) {
@@ -99,9 +101,9 @@
         }
     }, 1000);
 
-    function getTextLen(text) {
+    function getTextLen(ele) {
         // 深拷贝文本，避免修改原文本
-        var input = text;
+        var input = ele.innerHTML;
 
         // 有一定误差
         // 匹配HTML标签的正则表达式
