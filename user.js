@@ -2,15 +2,13 @@
 // @name         隐藏知乎评论
 // @version      0.0.4
 // @author       wzj042
-// @description  隐藏低信息量的评论，如单纯表情类评论
+// @description  屏蔽隐藏低信息量的评论，如单纯表情类评论
 // @icon         https://picx.zhimg.com/v2-abed1a8c04700ba7d72b45195223e0ff_l.jpg?source=d16d100b
 // @match        *://*.zhihu.com/*
 // @license      MIT
-// @namespace    https://github.com/wzj042/hide-zhihu-comment
-// @supportURL   https://github.com/wzj042/hide-zhihu-comment
-// @homepageURL  https://github.com/wzj042/hide-zhihu-comment
-// @downloadURL https://update.greasyfork.org/scripts/486322/%E9%9A%90%E8%97%8F%E7%9F%A5%E4%B9%8E%E8%AF%84%E8%AE%BA.user.js
-// @updateURL https://update.greasyfork.org/scripts/486322/%E9%9A%90%E8%97%8F%E7%9F%A5%E4%B9%8E%E8%AF%84%E8%AE%BA.meta.js
+// @namespace    https://github.com/adzcsx2/hide-zhihu-comment
+// @supportURL   https://github.com/adzcsx2/hide-zhihu-comment
+// @homepageURL  https://github.com/adzcsx2/hide-zhihu-comment
 // ==/UserScript==
 
 (function () {
@@ -21,7 +19,6 @@
         'Mark',
         '订阅'
     ]
-
     const looseBan = [
         // 宽松匹配，包含关键词即隐藏
         // 隐藏表情
@@ -32,6 +29,7 @@
 
     // 最短评论长度限制，小于或等于该长度的评论将被隐藏
     const banLenLimit = 3;
+    const banLenLimit_max = 1000;
 
     // 数组存储对应功能开关
     let funcSwitch = {
@@ -45,14 +43,24 @@
     const banSvg = `<svg width="16" height="16" viewBox="0 0 24 24" class="ZDI ZDI--PowerFill24" fill="currentColor"><path fill-rule="evenodd" d="M13.25 3.25a1.25 1.25 0 1 0-2.5 0V11a1.25 1.25 0 1 0 2.5 0V3.25ZM4.84 13.372A7.276 7.276 0 0 1 7.735 6.36a1.25 1.25 0 0 0-1.472-2.02 9.776 9.776 0 0 0-.597 15.32 9.741 9.741 0 0 0 12.666 0 9.776 9.776 0 0 0-.597-15.32 1.25 1.25 0 0 0-1.472 2.02 7.277 7.277 0 0 1 .444 11.4 7.242 7.242 0 0 1-9.416 0 7.268 7.268 0 0 1-2.453-4.388Z" clip-rule="evenodd"></path></svg>`
     const tempBan = `<button type="button" class="Button Button--plain Button--grey Button--withIcon Button--withLabel " style="transform: none;"><span style="display: inline-flex; align-items: center;">​${banSvg}</span>这次不看</button>`
 
-
     // 定时检查当前展开评论列表
     setInterval(function () {
-        let curCommentList = document.querySelectorAll('.CommentContent');
+        let curCommentList = document.querySelectorAll('.RichContent');
+
+
         // 如果内容纯粹为img标签
         for (let i = 0; i < curCommentList.length; i++) {
             let curComment = curCommentList[i];
+
             let commentDiv = curComment.parentElement.parentElement.parentElement;
+
+            let link_card =  commentDiv.querySelectorAll('.RichText-LinkCardContainer');
+
+            if(link_card.length != 0){
+                commentDiv.style.display = 'none';
+            }
+
+
             if (funcSwitch.pureImgBan && curComment.querySelector('img')) {
                 let formart = curComment.querySelector('img').outerHTML;
                 // 如果评论内容为纯图片
@@ -64,8 +72,7 @@
 
             let textLen = getTextLen(curComment);
 
-
-            if (funcSwitch.banLenLimit && textLen <= banLenLimit) {
+            if (funcSwitch.banLenLimit && (textLen <= banLenLimit || textLen >=banLenLimit_max)) {
                 commentDiv.style.display = 'none';
             }
 
@@ -80,7 +87,7 @@
             if (funcSwitch.looseBan) {
                 for (let j = 0; j < looseBan.length; j++) {
                     // 如果元素为字符串，直接判断
-                    console.log(looseBan[j], text.indexOf(looseBan[j]) !== -1, text);
+                    //console.log(looseBan[j], text.indexOf(looseBan[j]) !== -1, text);
                     if (typeof looseBan[j] === 'string' && text.indexOf(looseBan[j]) !== -1) {
                         commentDiv.style.display = 'none';
                         continue;
